@@ -1,7 +1,7 @@
 -- SG library
 -- Copyright (c) 2009, Neil Brown.
 -- All rights reserved.
--- 
+--
 -- Redistribution and use in source and binary forms, with or without
 -- modification, are permitted provided that the following conditions are
 -- met:
@@ -144,7 +144,7 @@ intersectLineShape l (Polygon c ps)
     -- To translate points to the line, we must add the centre of the polygon,
     -- and subtract the start of the line:
     translate = (fmapNum2 (-) c (getLineStart l) `plusDir`)
-    
+
     ps' = map (flip projectPointOnto2 $ id &&& perpendicular2 $ getLineDir l)
       $ map translate ps
 
@@ -250,7 +250,7 @@ polygonLines s
   = map (uncurry lineTo)
       . pairsInLoop . map (shapeCentre s `plusDir`)
         . polygonPoints $ s
-        
+
 -- Gives back the reflected unit vector for each shape's angle away from the other.
 -- returns Nothing if there was no collision after all.  You should only call this
 -- if quickOverlap returned True.
@@ -291,7 +291,7 @@ detailedOverlap pa pb
                         $ unzip $ map (getPerpUnit *** getPerpUnit) $
                         map (fst *** fst) $ filter inBound $ findAllIntersections2
                           (map (polygonLines pb !!) bLines, map (polygonLines pa !!) aLines)
-      
+
   where
     axes = collectAxes pa ++ collectAxes pb
 
@@ -314,7 +314,7 @@ detailedOverlap pa pb
     intersect' (as, bs) (cs, ds)
       | (null as && null bs) || (null cs && null ds) = ([], [])
       | otherwise = (as `intersect` cs, bs `intersect` ds)
-    
+
 
     getOverlaps :: [(Int, a)] -> [(Int, a)] -> ([Int], [Int])
     getOverlaps as bs

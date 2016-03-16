@@ -1,7 +1,7 @@
 -- SG library
 -- Copyright (c) 2009, Neil Brown.
 -- All rights reserved.
--- 
+--
 -- Redistribution and use in source and binary forms, with or without
 -- modification, are permitted provided that the following conditions are
 -- met:
@@ -87,7 +87,7 @@ instance VectorNum Quad where
   fmapNum2 = liftA2
   simpleVec = pure
 
-instance (Show a, Eq a, Num a) => Num (Pair a) where
+instance Num a => Num (Pair a) where
   (+) = fmapNum2 (+)
   (-) = fmapNum2 (-)
   (*) = fmapNum2 (*)
@@ -96,7 +96,7 @@ instance (Show a, Eq a, Num a) => Num (Pair a) where
   negate = fmapNum1inv negate
   fromInteger = simpleVec . fromInteger
 
-instance (Show a, Eq a, Num a) => Num (Triple a) where
+instance Num a => Num (Triple a) where
   (+) = fmapNum2 (+)
   (-) = fmapNum2 (-)
   (*) = fmapNum2 (*)
@@ -105,7 +105,7 @@ instance (Show a, Eq a, Num a) => Num (Triple a) where
   negate = fmapNum1inv negate
   fromInteger = simpleVec . fromInteger
 
-instance (Show a, Eq a, Num a) => Num (Quad a) where
+instance Num a => Num (Quad a) where
   (+) = fmapNum2 (+)
   (-) = fmapNum2 (-)
   (*) = fmapNum2 (*)

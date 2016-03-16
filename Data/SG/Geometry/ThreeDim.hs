@@ -1,7 +1,7 @@
 -- SG library
 -- Copyright (c) 2009, Neil Brown.
 -- All rights reserved.
--- 
+--
 -- Redistribution and use in source and binary forms, with or without
 -- modification, are permitted provided that the following conditions are
 -- met:
@@ -82,7 +82,7 @@ instance VectorNum Point3' where
   fmapNum2 = liftA2
   simpleVec = pure
 
-instance (Show a, Eq a, Num a) => Num (Rel3' a) where
+instance Num a => Num (Rel3' a) where
   (+) = fmapNum2 (+)
   (-) = fmapNum2 (-)
   (*) = fmapNum2 (*)

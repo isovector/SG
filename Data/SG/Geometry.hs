@@ -1,7 +1,7 @@
 -- SG library
 -- Copyright (c) 2009, Neil Brown.
 -- All rights reserved.
--- 
+--
 -- Redistribution and use in source and binary forms, with or without
 -- modification, are permitted provided that the following conditions are
 -- met:
@@ -39,7 +39,7 @@ import Data.SG.Vector.Basic
 -- lines.  There are separate instances for two dimensions and for three dimensions.
 -- Each pair of type-class parameters is uniquely determined by the other parameter
 -- (i.e. by the dimensionality, and which vector type you are using).
--- 
+--
 -- Minimal implementation: everything but scaleRel.
 class (VectorNum rel, Coord rel, Coord pt, IsomorphicVectors rel pt, IsomorphicVectors
   pt rel) => Geometry rel pt ln | rel -> pt ln, pt -> rel ln, ln -> rel pt where
@@ -158,7 +158,7 @@ nearestPointOnLine pt ln = nearestDistOnLine pt ln `alongLine` ln
 -- if the line is parallel to the YZ plane (in 2D, if the X component of the line
 -- is zero).  The value returned is a multiple of the direction vector of the line,
 -- which will only be the same as distance if the direction vector is a unit vector.
-valueAtX :: (Geometry rel pt ln, Coord2 rel, Coord2 pt, Fractional a)
+valueAtX :: (Eq a, Geometry rel pt ln, Coord2 rel, Coord2 pt, Fractional a)
   => ln a -> a -> Maybe a
 valueAtX l tgt
   | xd == 0 = Nothing
@@ -171,7 +171,7 @@ valueAtX l tgt
 -- if the line is parallel to the XZ plane (in 2D, if the Y component of the line
 -- is zero).  The value returned is a multiple of the direction vector of the line,
 -- which will only be the same as distance if the direction vector is a unit vector.
-valueAtY :: (Geometry rel pt ln, Coord2 rel, Coord2 pt, Fractional a)
+valueAtY :: (Eq a, Geometry rel pt ln, Coord2 rel, Coord2 pt, Fractional a)
   => ln a -> a -> Maybe a
 valueAtY l tgt
   | yd == 0 = Nothing
@@ -184,7 +184,7 @@ valueAtY l tgt
 -- if the line is parallel to the XY plane. The value returned is a multiple
 -- of the direction vector of the line, which will only be the same as
 -- distance if the direction vector is a unit vector.
-valueAtZ :: (Geometry rel pt ln, Coord3 rel, Coord3 pt, Fractional a)
+valueAtZ :: (Eq a, Geometry rel pt ln, Coord3 rel, Coord3 pt, Fractional a)
   => ln a -> a -> Maybe a
 valueAtZ l tgt
   | zd == 0 = Nothing
@@ -195,12 +195,12 @@ valueAtZ l tgt
 
 -- | pointAtX (and the Y and Z equivalents) are wrappers around 'valueAtX' (and
 -- similar) that give back the point rather than distance along the line.
-pointAtX, pointAtY :: (Geometry rel pt ln, Coord2 rel, Coord2 pt, Fractional a)
+pointAtX, pointAtY :: (Eq a, Geometry rel pt ln, Coord2 rel, Coord2 pt, Fractional a)
   => ln a -> a -> Maybe (pt a)
 pointAtX l = fmap (flip alongLine l) . valueAtX l
 pointAtY l = fmap (flip alongLine l) . valueAtY l
 
-pointAtZ :: (Geometry rel pt ln, Coord3 rel, Coord3 pt, Fractional a)
+pointAtZ :: (Eq a, Geometry rel pt ln, Coord3 rel, Coord3 pt, Fractional a)
   => ln a -> a -> Maybe (pt a)
 pointAtZ l = fmap (flip alongLine l) . valueAtZ l
 

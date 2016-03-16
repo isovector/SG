@@ -1,7 +1,7 @@
 -- SG library
 -- Copyright (c) 2009, Neil Brown.
 -- All rights reserved.
--- 
+--
 -- Redistribution and use in source and binary forms, with or without
 -- modification, are permitted provided that the following conditions are
 -- met:
@@ -87,7 +87,7 @@ instance VectorNum Point2' where
   simpleVec = pure
 
 -- | Multiplication doesn't make much sense, but the rest do!
-instance (Show a, Eq a, Num a) => Num (Rel2' a) where
+instance Num a => Num (Rel2' a) where
   (+) = fmapNum2 (+)
   (-) = fmapNum2 (-)
   (*) = fmapNum2 (*)
@@ -169,7 +169,7 @@ reflectAgainst2 v n = alongNormal + alongSurface
 -- | Reflects the first direction vector against the given surface normal.  The
 -- resulting direction vector should have the same magnitude as the original first
 -- parameter.
--- 
+--
 -- The reflection is not performed if the given vector points along the same
 -- direction as the normal, that is: if once projected onto the normal vector,
 -- the component is positive, the original first parameter is returned
@@ -212,7 +212,7 @@ data Line2' a = Line2 {getLineStart2 :: (Point2' a) , getLineDir2 :: (Rel2' a)}
 -- (Y3a) t yd xd = xd (y' + t' yd' - y)
 --
 -- Now set RHSs equal:
--- 
+--
 -- (A1) yd (x' + t' xd' - x) = xd (y' + t' yd' - y)
 -- (A2) yd (x' - x) + t' xd' yd = xd (y' - y) + t' xd yd'
 -- (A3) t' xd' yd - t' xd yd' = xd (y' - y) - yd (x' - x)
@@ -229,7 +229,7 @@ data Line2' a = Line2 {getLineStart2 :: (Point2' a) , getLineDir2 :: (Rel2' a)}
 -- (Y3b) t' yd' xd' = xd' (y + t yd - y')
 --
 -- Now set RHSs equal:
--- 
+--
 -- (B1) yd' (x + t xd - x') = xd' (y + t yd - y')
 -- (B2) yd' (x - x') + t xd yd' = xd' (y - y') + t xd' yd
 -- (B3) t xd yd' - t xd' yd = xd' (y - y') - yd' (x - x')
@@ -249,7 +249,7 @@ data Line2' a = Line2 {getLineStart2 :: (Point2' a) , getLineDir2 :: (Rel2' a)}
 -- Note that this function assumes the lines are infinite.  If you want to check
 -- for the intersection of two finite lines, check if the two parts of the result
 -- pair are both in the range 0 to 1 inclusive.
-intersectLines2 :: Fractional a => Line2' a -> Line2' a -> Maybe (a, a)
+intersectLines2 :: (Eq a, Fractional a) => Line2' a -> Line2' a -> Maybe (a, a)
 intersectLines2 (Line2 (Point2 (x,y)) (Rel2 (xd,yd) _)) (Line2 (Point2 (x',y')) (Rel2 (xd',yd') _))
   | a == 0 = Nothing
   | otherwise = Just $ (t, t')
@@ -262,7 +262,7 @@ intersectLines2 (Line2 (Point2 (x,y)) (Rel2 (xd,yd) _)) (Line2 (Point2 (x',y')) 
 -- the second list, and how far along that is each line.  That is, this is a bit
 -- like mapMaybe composed with intersectLines2 on all pairings of a line from the
 -- first list and a line from the second list.
-findAllIntersections2 :: Fractional a => ([Line2' a], [Line2' a]) -> [((Line2' a, a), (Line2' a, a))]
+findAllIntersections2 :: (Eq a, Fractional a) => ([Line2' a], [Line2' a]) -> [((Line2' a, a), (Line2' a, a))]
 findAllIntersections2 (as, bs)
   = catMaybes [ case intersectLines2 a b of
                   Just (ad, bd) -> Just ((a,ad), (b,bd))
@@ -311,6 +311,6 @@ intersectLineCircle (Line2 (Point2 (lx, ly)) (Rel2 (xd, yd) m))
       c = (lx - cx)*(lx - cx) + (ly - cy)*(ly - cy) - r*r
 
 -- | Like 'pointAtZ', but returns a 2D vector instead of a 3D vector
-point2AtZ :: (Geometry rel pt ln, Coord3 rel, Coord3 pt, Fractional a)
+point2AtZ :: (Eq a, Geometry rel pt ln, Coord3 rel, Coord3 pt, Fractional a)
   => ln a -> a -> Maybe (Point2' a)
 point2AtZ l = fmap (Point2 . (getX &&& getY) . flip alongLine l) . valueAtZ l
