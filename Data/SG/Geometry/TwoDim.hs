@@ -55,6 +55,11 @@ newtype Point2' a = Point2 (a, a)
 data Rel2' a = Rel2 (a,a) a
   deriving (Eq, Ord, Show, Read)
 
+instance (Num a, Monoid a) => Monoid (Rel2' a) where
+  mempty = makeRel2 (mempty, mempty)
+  (Rel2 (x, y) _) `mappend` (Rel2 (x', y') _)
+      = makeRel2 (mappend x x', mappend y y')
+
 -- | Constructs a Rel2' vector.
 makeRel2 :: Num a => (a, a) -> Rel2' a
 makeRel2 (x, y) = Rel2 (x, y) (x * x + y * y)

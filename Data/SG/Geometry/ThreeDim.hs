@@ -51,6 +51,12 @@ newtype Point3' a = Point3 (a, a, a)
 data Rel3' a = Rel3 (a, a, a) a
   deriving (Eq, Ord, Show, Read)
 
+instance (Num a, Monoid a) => Monoid (Rel3' a) where
+  mempty = makeRel3 (mempty, mempty, mempty)
+  (Rel3 (x, y, z) _) `mappend` (Rel3 (x', y', z') _)
+      = makeRel3 (mappend x x', mappend y y', mappend z z')
+
+
 -- | Constructs a Rel3' vector
 makeRel3 :: Num a => (a, a, a) -> Rel3' a
 makeRel3 (x, y, z) = Rel3 (x, y, z) (x * x + y * y + z * z)
