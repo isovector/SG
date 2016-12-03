@@ -47,7 +47,6 @@
 module Data.SG.Vector.Basic where
 
 import Control.Applicative
-import Data.Foldable
 import Data.Traversable
 
 import Data.SG.Vector

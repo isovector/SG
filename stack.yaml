@@ -1,7 +1,7 @@
 packages:
 - '.'
 
-resolver: nightly-2016-09-01
+resolver: lts-7.1
 extra-deps:
 
 flags: {}

@@ -254,7 +254,7 @@ polygonLines s
 -- Gives back the reflected unit vector for each shape's angle away from the other.
 -- returns Nothing if there was no collision after all.  You should only call this
 -- if quickOverlap returned True.
-detailedOverlap :: forall a. (Num a, Ord a, Floating a) => Shape' a -> Shape' a -> Maybe (Rel2' a, Rel2' a)
+detailedOverlap :: forall a. (Ord a, Floating a) => Shape' a -> Shape' a -> Maybe (Rel2' a, Rel2' a)
 detailedOverlap (Circle pa _) (Circle pb _)
 -- Rely on quickOverlap having been called:
   = let a_min_b = pa `fromPt` pb in Just (unitVector a_min_b, unitVector $ negate a_min_b)

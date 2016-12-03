@@ -1,7 +1,7 @@
 -- SG library
 -- Copyright (c) 2009, Neil Brown.
 -- All rights reserved.
--- 
+--
 -- Redistribution and use in source and binary forms, with or without
 -- modification, are permitted provided that the following conditions are
 -- met:
@@ -128,7 +128,7 @@ instance (Applicative c, Foldable c, Traversable c, Functor c) => Matrix (Square
   -- TODO make this all-functors:
   transpose (SquareMatrix m) = SquareMatrix . fromList . map fromList . List.transpose . map toList . toList $ m
 
-instance (Num a, Traversable c, Foldable c, Functor c, Applicative c) => Num (SquareMatrix c a) where
+instance (Num a, Foldable c, Functor c, Applicative c) => Num (SquareMatrix c a) where
   (+) = liftA2 (+)
   (-) = liftA2 (-)
   -- Multiplication: hmmmm.
@@ -137,13 +137,13 @@ instance (Num a, Traversable c, Foldable c, Functor c, Applicative c) => Num (Sq
   -- the whole of the right-hand matrix that will yield the right result.  Each
   -- element needs to operate on its own row from the LHS, and its own column from
   -- the RHS.
-  -- 
+  --
   (*) (SquareMatrix a) (SquareMatrix b)
     = SquareMatrix $ fmap perRow a
     where
 --      sumSetOfRows :: c (c a) -> c a
       sumSetOfRows = foldr (liftA2 (+)) (pure 0)
-      
+
 --      perRow :: c a -> c a
       perRow lrow = sumSetOfRows $ liftA2 (\x y -> fmap (*x) y) lrow b
 

@@ -35,7 +35,6 @@ module Data.SG.Geometry.TwoDim (Point2'(..), Rel2'(..), makeRel2, Line2'(..),
 
 import Control.Applicative
 import Control.Arrow ((&&&))
-import Data.Foldable (Foldable(foldr))
 import Data.Traversable (Traversable(traverse))
 import Data.Maybe
 
@@ -55,10 +54,10 @@ newtype Point2' a = Point2 (a, a)
 data Rel2' a = Rel2 (a,a) a
   deriving (Eq, Ord, Show, Read)
 
-instance (Num a, Monoid a) => Monoid (Rel2' a) where
-  mempty = makeRel2 (mempty, mempty)
+instance (Num a) => Monoid (Rel2' a) where
+  mempty = makeRel2 (0, 0)
   (Rel2 (x, y) _) `mappend` (Rel2 (x', y') _)
-      = makeRel2 (mappend x x', mappend y y')
+      = makeRel2 (x + x', y + y')
 
 -- | Constructs a Rel2' vector.
 makeRel2 :: Num a => (a, a) -> Rel2' a

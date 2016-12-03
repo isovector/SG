@@ -31,5 +31,5 @@ Library
                      Data.SG.Vector
                      Data.SG.Vector.Basic
   ghc-options:       -Wall
-  extensions:        MultiParamTypeClasses FlexibleInstances FunctionalDependencies
+  default-extensions:        MultiParamTypeClasses FlexibleInstances FunctionalDependencies
                      ScopedTypeVariables FlexibleContexts

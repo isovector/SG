@@ -32,7 +32,6 @@
 module Data.SG.Geometry.ThreeDim where
 
 import Control.Applicative
-import Data.Foldable (Foldable(foldr))
 import Data.Traversable (Traversable(traverse))
 
 import Data.SG.Geometry
@@ -51,10 +50,10 @@ newtype Point3' a = Point3 (a, a, a)
 data Rel3' a = Rel3 (a, a, a) a
   deriving (Eq, Ord, Show, Read)
 
-instance (Num a, Monoid a) => Monoid (Rel3' a) where
-  mempty = makeRel3 (mempty, mempty, mempty)
+instance (Num a) => Monoid (Rel3' a) where
+  mempty = makeRel3 (0, 0, 0)
   (Rel3 (x, y, z) _) `mappend` (Rel3 (x', y', z') _)
-      = makeRel3 (mappend x x', mappend y y', mappend z z')
+      = makeRel3 (x + x', y + y', z + z')
 
 
 -- | Constructs a Rel3' vector
