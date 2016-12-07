@@ -26,11 +26,13 @@
 -- NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+{-# LANGUAGE TemplateHaskell #-}
 
 -- | A module with types to use in a 3D system, and various helper functions.
 -- Several more functions are available for use in the "Data.SG.Geometry" module.
 module Data.SG.Geometry.ThreeDim where
 
+import Control.Lens
 import Control.Applicative
 import Data.Traversable (Traversable(traverse))
 
@@ -39,8 +41,12 @@ import Data.SG.Vector
 import Data.SG.Vector.Basic
 
 -- | A point in 3D space.
-newtype Point3' a = Point3 (a, a, a)
-  deriving (Eq, Ord, Show, Read)
+data Point3' a = Point3
+  { _xPos :: a
+  , _yPos :: a
+  , _zPos :: a
+  } deriving (Eq, Ord, Show, Read)
+makeClassy ''Point3'
 
 -- | A relative vector (free vector) in 3D space.  The triple is the x, y, z components,
 -- and the last item is the /squared magnitude/ of the vector, which is stored
@@ -61,9 +67,9 @@ makeRel3 :: Num a => (a, a, a) -> Rel3' a
 makeRel3 (x, y, z) = Rel3 (x, y, z) (x * x + y * y + z * z)
 
 instance IsomorphicVectors Rel3' Point3' where
-  iso (Rel3 p _) = Point3 p
+  iso (Rel3 (x, y, z) _) = Point3 x y z
 instance IsomorphicVectors Point3' Rel3' where
-  iso (Point3 p) = makeRel3 p
+  iso (Point3 x y z) = makeRel3 (x, y, z)
 
 instance IsomorphicVectors Rel3' Triple where
   iso (Rel3 p _) = Triple p
@@ -71,9 +77,9 @@ instance IsomorphicVectors Triple Rel3' where
   iso (Triple p) = makeRel3 p
 
 instance IsomorphicVectors Point3' Triple where
-  iso (Point3 p) = Triple p
+  iso (Point3 x y z) = Triple (x, y, z)
 instance IsomorphicVectors Triple Point3' where
-  iso (Triple p) = Point3 p
+  iso (Triple (x, y, z)) = Point3 x y z
 
 instance VectorNum Rel3' where
   fmapNum1 f (Rel3 (x, y, z) _) = makeRel3 (f x, f y, f z)
@@ -97,29 +103,27 @@ instance Num a => Num (Rel3' a) where
   fromInteger = simpleVec . fromInteger
 
 instance Functor Point3' where
-  fmap f (Point3 (x, y, z)) = Point3 (f x, f y, f z)
+  fmap f (Point3 x y z) = Point3 (f x) (f y) (f z)
 
 instance Applicative Point3' where
-  pure a = Point3 (a, a, a)
-  (<*>) (Point3 (fa, fb, fc)) (Point3 (a, b, c)) = Point3 (fa a, fb b, fc c)
+  pure a = Point3 a a a
+  (<*>) (Point3 fa fb fc) (Point3 a b c) = Point3 (fa a) (fb b) (fc c)
 
 instance Foldable Point3' where
-  foldr f t (Point3 (x, y, z)) = x `f` (y `f` (z `f` t))
+  foldr f t (Point3 x y z) = x `f` (y `f` (z `f` t))
 
 instance Foldable Rel3' where
   foldr f t (Rel3 (x, y, z) _) = x `f` (y `f` (z `f` t))
 
 instance Traversable Point3' where
-  traverse f (Point3 (x, y, z)) = liftA3 (curry3 Point3) (f x) (f y) (f z)
-    where
-      curry3 g a b c = g (a, b, c)
+  traverse f (Point3 x y z) = Point3 <$> f x <*> f y <*> f z
 
 instance Coord2 Point3' where
-  getX (Point3 (a,_,_)) = a
-  getY (Point3 (_,b,_)) = b
+  getX = view xPos
+  getY = view yPos
 
 instance Coord3 Point3' where
-  getZ (Point3 (_,_,c)) = c
+  getZ = view zPos
 
 instance Coord2 Rel3' where
   getX (Rel3 (a, _, _) _) = a
@@ -129,8 +133,8 @@ instance Coord3 Rel3' where
   getZ (Rel3 (_, _, c) _) = c
 
 instance Coord Point3' where
-  getComponents (Point3 (a, b, c)) = [a, b, c]
-  fromComponents (a:b:c:_) = Point3 (a, b, c)
+  getComponents (Point3 a b c) = [a, b, c]
+  fromComponents (a:b:c:_) = Point3 a b c
   fromComponents xs = fromComponents $ xs ++ repeat 0
 
 instance Coord Rel3' where
@@ -144,9 +148,9 @@ instance Coord Rel3' where
 instance Geometry Rel3' Point3' Line3' where
   -- a*x*a*x + a*y*a*y = a^2 * (x^2 + y^2)
   scaleRel a (Rel3 (x, y, z) m) = Rel3 (a*x, a*y, a*z) (a*a*m)
-  plusDir (Point3 (x, y, z)) (Rel3 (x', y', z') _)
-    = Point3 (x + x', y + y', z + z')
-  fromPt (Point3 (x, y, z)) (Point3 (x', y', z'))
+  plusDir (Point3 x y z) (Rel3 (x', y', z') _)
+    = Point3 (x + x') (y + y') (z + z')
+  fromPt (Point3 x y z) (Point3 x' y' z')
     = makeRel3 (x - x', y - y', z - z')
   getLineVecs (Line3 pt dir) = (pt, dir)
   makeLine = Line3
